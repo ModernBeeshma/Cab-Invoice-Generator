@@ -1,0 +1,80 @@
+package com.wipro.validations;
+import java.util.Random;
+import com.wipro.userexceptions.*;
+import com.wipro.bean.*;
+public class TripValidator {
+	public static int[] amountGenerator(int kmsUsed,String
+			cabType)
+	{
+		int res[]=new int[2];
+		Random rn=new Random();
+		res[0]=rn.nextInt((99999-10000)+1)+10000;
+		if(cabType=="Tata Indica")
+		{
+			res[1]=kmsUsed*12;
+		}
+		else if(cabType=="Tata Indigo")
+		{
+			res[1]=kmsUsed*10;
+		}
+		else if(cabType=="BMW")
+		{
+			res[1]=kmsUsed*45;
+		}
+		else if(cabType=="Logan")
+		{
+			res[1]=kmsUsed*31;
+		}
+		return res;
+	}
+	public static String printBillAmount(CabBean cabbean)
+	{
+		String id=cabbean.getBookingID();
+	    if(id.length()==7)
+	    {
+	      if(id.charAt(0)=='A'&&id.charAt(1)=='D')
+	      {
+	        for(int i=2;i<7;i++)
+	        {
+	          if(Character.isDigit(id.charAt(i)))
+	          {
+	          }
+	          else
+	          {
+	            return "Invalid Booking ID";
+	          }
+	        }
+	      }
+	      else
+	      {
+	    	  return "Invalid Booking ID";
+	      }
+	    }
+	    else
+	    {
+	    	return "Invalid Booking ID";
+	    }
+	    int User_id=cabbean.getUserID();
+	    if(User_id<1000&&User_id>1501)
+	       return "Invalid User ID";
+	    String cab=cabbean.getCabType();
+	    if(!((cab.equals("BMW")) || (cab.equals("Tata Indica"))||cab.equals("Tata Indigo")||cab.equals("Logan")))
+	    {
+	    	return "Invalid Cab Type";
+	    }
+	    int km=Integer.parseInt(cabbean.getKmsUsed());
+	    try{
+	    	if(km<0)
+	    		throw new NegativeKilometerException();
+	    }
+	    catch(NegativeKilometerException n)
+	    {
+	    	System.out.println(n.toString());
+	    }
+	    int[] arr=amountGenerator(km,cab);
+	    String result=arr[1]+"";
+	    cabbean.setReceiptNo(arr[0]);
+	    cabbean.setTotalAmount(Float.parseFloat(result));
+		return result;
+	}
+}
